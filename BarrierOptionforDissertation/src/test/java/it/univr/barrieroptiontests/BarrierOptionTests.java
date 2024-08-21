@@ -28,8 +28,8 @@ public class BarrierOptionTests {
 	public static void main(String[] args) throws CalculationException {
 
 		//option parameters
-		double upperBarrier = 150;
-		double lowerBarrier = 1;
+		double upperBarrier = 120;
+		double lowerBarrier = 0;
 		double maturity = 3.0;		
 		double strike = 100;
 		boolean iscall = true; 
@@ -66,7 +66,7 @@ public class BarrierOptionTests {
 		//model (i.e., underlying) parameters
 		double initialValue = 100;
 		double riskFreeRate = 0.0;
-		double volatility = 0.3;
+		double volatility = 0.1;
 		
 		//Finite difference discretization parameters
 		final int numTimesteps = 70;

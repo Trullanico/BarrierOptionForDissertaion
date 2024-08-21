@@ -1,7 +1,11 @@
 package it.univr.dissertation.analyticformulas;
 
 import net.finmath.functions.AnalyticFormulas;
+
 import net.finmath.functions.NormalDistribution;
+
+
+//For analytic value it's more easy to use the class net.finmath.functions.BarrierOptions, but i have try to implement some formulas
 
 public class MyAnalyticForumulas {
 
@@ -43,9 +47,6 @@ public class MyAnalyticForumulas {
 					+ AnalyticFormulas.blackScholesOptionValue(initialValue, riskFreeRate, sigma, maturity, lowerBarrier) 
 					- Math.pow(lowerBarrier/initialValue,exprTilda) 
 					* AnalyticFormulas.blackScholesOptionValue(lowerBarrier*lowerBarrier/initialValue, riskFreeRate, sigma, maturity, lowerBarrier);
-//			System.out.println("stock " + stock);
-//					System.out.println("bond " +bond);
-//							System.out.println("hContract " +hContractSecond+"second "+ hContract);
 									
 			return (strike * bond) - stock + MyAnalyticForumulas.blackScholesDownAndOut(initialValue, riskFreeRate, sigma, maturity, strike, lowerBarrier, 1);
 		}
@@ -72,83 +73,83 @@ public class MyAnalyticForumulas {
 	
 	}
 	
-	/*
-	 *  B&S for Up and Out call/put 
-	 *  For Call: In progress, attention, now there is a dummy value
-	 *  For Put: Bjork,Arbitrage Theory in Continuous Time, Proposition 18.19, pag. 275
-	 */
-	public static double blackScholesUpAndOut(double initialValue, double riskFreeRate, double sigma, double maturity, double strike,
-			double upperBarrier, double callOrPut ) {
-		double exprTilda = (2*(riskFreeRate - (0.5 *sigma*sigma)))/(sigma*sigma);
-		
-		if (callOrPut == 1) {
-		//pay attention, this is dummy value
-			return 1;
-			}
-			else {
-				return AnalyticFormulas.blackScholesOptionValue(initialValue, riskFreeRate, sigma, maturity, strike, false)
-						- Math.pow(upperBarrier/initialValue,exprTilda) 
-						* AnalyticFormulas.blackScholesOptionValue(upperBarrier*upperBarrier/initialValue, riskFreeRate, sigma, maturity, strike, false);
-			}
-		
-	}
-	
-	/*
-	 *  B&S for Up and In call/put 
-	 *  For Call: In progress, attention, now there is a dummy value
-	 *  For Put: In-Out parity
-	 */
-	public static double blackScholesUpAndIn(double initialValue, double riskFreeRate, double sigma, double maturity, double strike,
-			double upperBarrier, double callOrPut ) {
-		
-		double exprTilda = (2*(riskFreeRate - (0.5 *sigma*sigma)))/(sigma*sigma);
-		
-		if (callOrPut == 1) {
-			//pay attention, this is dummy value
-			return 1;
-			}
-			else {
-				return Math.pow(upperBarrier/initialValue,exprTilda) 
-						* AnalyticFormulas.blackScholesOptionValue(upperBarrier*upperBarrier/initialValue, riskFreeRate, sigma, maturity, strike, false) ;
-			}
-	}
-	
-
-	
-	/*
-	 * IN PROGRESS
-	 * In this way bond look OK, it's 1 when upperBarrier is high, and it decrease when the Barrier decrease
-	 * Also the stock look OK, it's 100 hen upperBarrier is high, and it decrease when the Barrier decrease
-	 * 
-	 * BUT the results isn't satisfying, when the Barrier is near, can be negative values.
-	 * 
-	 * COMMENTO NON MOLTO TECNICO: 
-	 * Ho rimaneggaito un po'alla carlona i pezzi per far quadrare, ma senza successo, forse però non è lontana la soluzione
-	 * 
-	 */
-	public static double blackScholesUpAndOutCall(double initialValue, double riskFreeRate, double sigma, double maturity, double strike,
-			double upperBarrier) {
-		
-		double rTilda = riskFreeRate - (0.5 *sigma*sigma);
-		double exprTilda = (2*(riskFreeRate - (0.5 *sigma*sigma)))/(sigma*sigma);
-		
-		double hContract = Math.exp(-riskFreeRate*(maturity))* NormalDistribution.cumulativeDistribution (((rTilda*maturity) + Math.log(initialValue/upperBarrier))/(sigma*Math.sqrt(maturity))) ;
-		double hContractSecond = Math.exp(-riskFreeRate*(maturity))* NormalDistribution.cumulativeDistribution (((rTilda*maturity) + Math.log((upperBarrier*upperBarrier/initialValue)/upperBarrier))/(sigma*Math.sqrt(maturity))) ;
-		
-		double bond = hContractSecond - Math.pow(upperBarrier/initialValue,exprTilda) * hContract ;
-		double stock = (upperBarrier * hContractSecond) 
-				- (upperBarrier * Math.pow(upperBarrier/initialValue,exprTilda) * hContract) 
-				-(AnalyticFormulas.blackScholesOptionValue(initialValue, riskFreeRate, sigma, maturity, upperBarrier, false)
-				- Math.pow(upperBarrier/initialValue,exprTilda) 
-			* AnalyticFormulas.blackScholesOptionValue(upperBarrier*upperBarrier/initialValue, riskFreeRate, sigma, maturity, upperBarrier, false))
-				;
-		
-		System.out.println("stock " + stock);
-		System.out.println("bond " +bond);
-//				System.out.println("hContract " +hContractSecond+ "first " + hContract);
-				
-		return  stock -(strike * bond)+ MyAnalyticForumulas.blackScholesUpAndOut(initialValue, riskFreeRate, sigma, maturity, strike, upperBarrier, -1);
-	}
+//	/*
+//	 *  B&S for Up and Out call/put 
+//	 *  For Call: In progress, attention, now there is a dummy value
+//	 *  For Put: Bjork,Arbitrage Theory in Continuous Time, Proposition 18.19, pag. 275
+//	 */
+//	public static double blackScholesUpAndOut(double initialValue, double riskFreeRate, double sigma, double maturity, double strike,
+//			double upperBarrier, double callOrPut ) {
+//		double exprTilda = (2*(riskFreeRate - (0.5 *sigma*sigma)))/(sigma*sigma);
+//		
+//		if (callOrPut == 1) {
+//		//pay attention, this is dummy value
+//			return 1;
+//			}
+//			else {
+//				return AnalyticFormulas.blackScholesOptionValue(initialValue, riskFreeRate, sigma, maturity, strike, false)
+//						- Math.pow(upperBarrier/initialValue,exprTilda) 
+//						* AnalyticFormulas.blackScholesOptionValue(upperBarrier*upperBarrier/initialValue, riskFreeRate, sigma, maturity, strike, false);
+//			}
+//		
+//	}
+//	
+//	/*
+//	 *  B&S for Up and In call/put 
+//	 *  For Call: In progress, attention, now there is a dummy value
+//	 *  For Put: In-Out parity
+//	 */
+//	public static double blackScholesUpAndIn(double initialValue, double riskFreeRate, double sigma, double maturity, double strike,
+//			double upperBarrier, double callOrPut ) {
+//		
+//		double exprTilda = (2*(riskFreeRate - (0.5 *sigma*sigma)))/(sigma*sigma);
+//		
+//		if (callOrPut == 1) {
+//			//pay attention, this is dummy value
+//			return 1;
+//			}
+//			else {
+//				return Math.pow(upperBarrier/initialValue,exprTilda) 
+//						* AnalyticFormulas.blackScholesOptionValue(upperBarrier*upperBarrier/initialValue, riskFreeRate, sigma, maturity, strike, false) ;
+//			}
+//	}
+//	
+//
+//	
+//	/*
+//	 * IN PROGRESS
+//	 * In this way bond look OK, it's 1 when upperBarrier is high, and it decrease when the Barrier decrease
+//	 * Also the stock look OK, it's 100 hen upperBarrier is high, and it decrease when the Barrier decrease
+//	 * 
+//	 * BUT the results isn't satisfying, when the Barrier is near, can be negative values.
+//	 * 
+//	 * COMMENTO NON MOLTO TECNICO: 
+//	 * Ho rimaneggaito un po'alla carlona i pezzi per far quadrare, ma senza successo, forse però non è lontana la soluzione
+//	 * 
+//	 */
+//	public static double blackScholesUpAndOutCall(double initialValue, double riskFreeRate, double sigma, double maturity, double strike,
+//			double upperBarrier) {
+//		
+//		double rTilda = riskFreeRate - (0.5 *sigma*sigma);
+//		double exprTilda = (2*(riskFreeRate - (0.5 *sigma*sigma)))/(sigma*sigma);
+//		
+//		double hContract = Math.exp(-riskFreeRate*(maturity))* NormalDistribution.cumulativeDistribution (((rTilda*maturity) + Math.log(initialValue/upperBarrier))/(sigma*Math.sqrt(maturity))) ;
+//		double hContractSecond = Math.exp(-riskFreeRate*(maturity))* NormalDistribution.cumulativeDistribution (((rTilda*maturity) + Math.log((upperBarrier*upperBarrier/initialValue)/upperBarrier))/(sigma*Math.sqrt(maturity))) ;
+//		
+//		double bond = hContractSecond - Math.pow(upperBarrier/initialValue,exprTilda) * hContract ;
+//		double stock = (upperBarrier * hContractSecond) 
+//				- (upperBarrier * Math.pow(upperBarrier/initialValue,exprTilda) * hContract) 
+//				-(AnalyticFormulas.blackScholesOptionValue(initialValue, riskFreeRate, sigma, maturity, upperBarrier, false)
+//				- Math.pow(upperBarrier/initialValue,exprTilda) 
+//			* AnalyticFormulas.blackScholesOptionValue(upperBarrier*upperBarrier/initialValue, riskFreeRate, sigma, maturity, upperBarrier, false))
+//				;
+//		
+//		System.out.println("stock " + stock);
+//		System.out.println("bond " +bond);
+////				System.out.println("hContract " +hContractSecond+ "first " + hContract);
+//				
+//		return  stock -(strike * bond)+ MyAnalyticForumulas.blackScholesUpAndOut(initialValue, riskFreeRate, sigma, maturity, strike, upperBarrier, -1);
+//	}
 	
 //	public static double blackScholesDownAndOutPut(double initialValue, double riskFreeRate, double sigma, double maturity, double strike,
 //	double lowerBarrier) {

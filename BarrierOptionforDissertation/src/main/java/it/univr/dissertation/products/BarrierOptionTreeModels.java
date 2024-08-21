@@ -5,21 +5,12 @@ import java.util.function.DoubleUnaryOperator;
 import it.univr.dissertation.usefulclass.ApproximatingTreeModelInterface;
 import it.univr.dissertation.usefulclass.UsefulMethodsForArrays;
 
-/**
- * This class implements the valuation of an European option with double or single barrier. This is a path
- * dependent option which pays the payoff only if the value of the underlying stays in an interval
- * [lowerBarrier, upperBarrier] for the whole path. We have single barrier if we only have lowerBarrier
- * or only have upperBarrier. The value is computed via an approximation of a continuous time process
- * with a tree model, repesented by an object of type ApproximatingTreeModelInterface.
- * 
- * @author Andrea Mazzon
- *
- */
+
 public class BarrierOptionTreeModels {
 
 	private double maturity;
 	private DoubleUnaryOperator payoffFunction;
-	private DoubleUnaryOperator barrierFunction;//this is defined in the costructor.
+	private DoubleUnaryOperator barrierFunction;//this is defined in the constructor.
 	
 
 	/**
@@ -30,11 +21,11 @@ public class BarrierOptionTreeModels {
 	 * @param upperBarrier the upper barrier B_U in the option payoff
 	 * @param isCall Set true for call, set false for put
 	 * @param payoffFunction, the function which identifies the payoff. The payoff is f(S_T) for payoffFunction
-	 * 			f and underlying value S_T at maturity. The payoffFunction is represented by a DoubleUnaryOperator
+	 * 	If and underlying value S_T at maturity. The payoffFunction is represented by a DoubleUnaryOperator
 	 */
 	public BarrierOptionTreeModels(double maturity,double strike, double lowerBarrier, double upperBarrier, boolean isCall ) {
 		this.maturity = maturity;
-		//ternary operator!
+		
 		barrierFunction = (x) -> (x>lowerBarrier & x < upperBarrier ? 1 : 0);
 		
 		if (isCall == true) {
@@ -60,6 +51,7 @@ public class BarrierOptionTreeModels {
         }
 		return optionValues[0];
 	}
+	
 	/**
 	 * It returns the discounted value of the option written on the continuous time model approximated by
 	 * the object of type ApproximatingTreeModelInterface given in input. The value of the option is computed
@@ -94,6 +86,7 @@ public class BarrierOptionTreeModels {
 
 		int numberOfTimes = (int) Math.round(maturity/approximatingTreeModel.getTimeStep());
 		for (int timeIndex = numberOfTimes - 1; timeIndex >= 0; timeIndex--) {
+			
 			//now we repeat the same thing as above at any time.
 			
 			//the values of the option not considering the barrier

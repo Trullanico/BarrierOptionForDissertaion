@@ -4,9 +4,11 @@ import java.util.Random;
 
 import it.univr.dissertation.analyticformulas.MyAnalyticForumulas;
 import it.univr.dissertation.products.BarrierOptionMonteCarlo;
-import it.univr.dissertation.products.BarrierOptionModified;
-import it.univr.dissertation.products.BarrierOptionModifiedbyNico;
+import it.univr.dissertation.products.BarrierOptionDinamicTimeStepsV1;
+import it.univr.dissertation.products.BarrierOptionDinamicTimeStepsV2;
 import net.finmath.exception.CalculationException;
+import net.finmath.functions.BarrierOptions;
+import net.finmath.functions.BarrierOptions.BarrierType;
 import net.finmath.montecarlo.BrownianMotion;
 import net.finmath.montecarlo.BrownianMotionFromMersenneRandomNumbers;
 import net.finmath.montecarlo.assetderivativevaluation.MonteCarloBlackScholesModel;
@@ -20,7 +22,7 @@ public class BarrierOptionTestMc {
 
 		//option parameters
 		double upperBarrier = Long.MAX_VALUE;
-		double lowerBarrier = 95;
+		double lowerBarrier = 90;
 		double maturity = 1.0;		
 		double strike = 100;
 		boolean iscall = true; 
@@ -29,7 +31,7 @@ public class BarrierOptionTestMc {
 		//model (i.e., underlying) parameters
 		double initialValue = 100;
 		double riskFreeRate = 0.0;
-		double volatility = 0.1	;
+		double volatility = 0.3;
 				
 		double callOrPut; 
 		if(iscall == true) {
@@ -40,12 +42,12 @@ public class BarrierOptionTestMc {
 		}
 		
 		AbstractAssetMonteCarloProduct optionValueCalculator = new BarrierOptionMonteCarlo(maturity, strike, lowerBarrier, upperBarrier, callOrPut , 0,  isKnockOut);
-		BarrierOptionModifiedbyNico optionValueCalculatorModified = new BarrierOptionModifiedbyNico(maturity, strike, lowerBarrier, upperBarrier);
-	//	BarrierOptionModified optionValueCalculatorv2 = new BarrierOptionModified(maturity, strike, lowerBarrier, upperBarrier);
-		//con timesteo 0.005 ci mettono lo stesso tempo (dipende dalla volatilità)
+		
+		BarrierOptionDinamicTimeStepsV2 optionValueCalculatorModified = new BarrierOptionDinamicTimeStepsV2(maturity, strike, lowerBarrier, upperBarrier);
+	
 		//time discretization parameters
 		double initialTime = 0.0;
-		double timeStep = 1;
+		double timeStep = 0.05;
 		int numberOfTimeSteps = (int) (maturity/timeStep);
 		
 		//time discretization parameters
@@ -57,7 +59,7 @@ public class BarrierOptionTestMc {
 		TimeDiscretization timesforModified = new TimeDiscretizationFromArray(initialTimeforModified, numberOfTimeStepsforModified, timeStepforModified);
 		
 		//simulation parameters
-		int numberOfPaths = 10000;
+		int numberOfPaths = 50000;
 	//	int seed = 1897;
 		
 		//simulation parameters
@@ -67,7 +69,11 @@ public class BarrierOptionTestMc {
 		optionValueCalculatorModified.setVolatility(volatility);
 		optionValueCalculatorModified.setRiskFreeRate(riskFreeRate);
 		
+		//for test, remember to replace type of option when you change, now is set for a Down and Out
 		double analyticPrice = MyAnalyticForumulas.blackScholesDownAndOut(initialValue,riskFreeRate,volatility, maturity,strike,lowerBarrier, callOrPut);
+//				BarrierOptions.blackScholesBarrierOptionValue
+//				(initialValue, riskFreeRate, 0, volatility, maturity, strike, iscall, 0, lowerBarrier, BarrierType.DOWN_IN);
+				
 		System.out.println("analyticPrice " + analyticPrice);
 		
 		 int numSimulations = 25; // Number of simulations to run
@@ -108,6 +114,7 @@ public class BarrierOptionTestMc {
 	            
 	           System.out.println("MCmodified " + monteCarloPriceModified);
 	            System.out.println("MC " + monteCarloPrice);
+	            System.out.println();
 	            // Output results for this iteration
 	            System.out.println("Simulation " + (i+1) + ":");
 	            System.out.println("Error: " + error);
@@ -117,6 +124,7 @@ public class BarrierOptionTestMc {
 	        }
 	        // Calculate average error and average execution time
 	        double averageError = calculateAverage(errors);
+	        double percError = averageError/analyticPrice;
 	        long averageExecutionTime = calculateAverage(executionTimes);
 	        
 	        double averageErrorMD = calculateAverage(errorsforModified);
@@ -125,11 +133,12 @@ public class BarrierOptionTestMc {
 
 	        // Output average results
 	        System.out.println("Average Error: " + averageError);
+	        System.out.println("Percentage Error: " + percError);
 	        System.out.println("Average Execution Time: " + averageExecutionTime + " ms");
 	        
 	     // Output average results
 	        System.out.println("Average Error for modified: " + averageErrorMD);
-	        System.out.println("percentage Error for modified: " + percErrorMD);
+	        System.out.println("Percentage Error for modified: " + percErrorMD);
 	        System.out.println("Average Execution Time for modified: " + averageExecutionTimeMD + " ms");
 	    }
 	

@@ -20,24 +20,7 @@ import net.finmath.time.TimeDiscretization;
 import net.finmath.time.TimeDiscretizationFromArray;
 
 
-
-
-
-
-/**
- * This class implements the valuation of a European option on a single asset.
- * In particular, the option has payoff
- * (X_T-K)1_{B_L <= X_t <= B_U} for a given underlying X_t, t >=0. 
- * Here K is the strike of the option, T its maturity, B_L and B_U the lower and upper barrier, respectively.
- * 
- * Note that this class extends AbstractAssetMonteCarloProduct. For this reason, we have to implement the method
- * getValue(double evaluationTime, AssetModelMonteCarloSimulationModel model).
- * 
- * We do that exploiting the methods of the interface AssetModelMonteCarloSimulationModel.
- *
- * @author Andrea Mazzon
- */
-public class BarrierOptionModifiedbyNico extends AbstractAssetMonteCarloProduct {
+public class BarrierOptionDinamicTimeStepsV2 extends AbstractAssetMonteCarloProduct {
 
 	private double maturity;
 	private double strike;
@@ -60,7 +43,7 @@ public class BarrierOptionModifiedbyNico extends AbstractAssetMonteCarloProduct 
 	 * @param upperBarrier the upper barrier B_U in the option payoff (X_T-K)1_{B_L <= X_t <= B_U}
 	 * @param underlyingIndex it identifies the underlying if model in getValue is multi-dimensional
 	 */
-	public BarrierOptionModifiedbyNico(double maturity, double strike, double lowerBarrier, double upperBarrier, int underlyingIndex) {
+	public BarrierOptionDinamicTimeStepsV2(double maturity, double strike, double lowerBarrier, double upperBarrier, int underlyingIndex) {
 		this.maturity = maturity;
 		this.strike = strike;
 		this.lowerBarrier = lowerBarrier;
@@ -77,7 +60,7 @@ public class BarrierOptionModifiedbyNico extends AbstractAssetMonteCarloProduct 
 	 * @param lowerBarrier the lower barrier B_L in the option payoff (X_T-K)1_{B_L <= X_t <= B_U}
 	 * @param upperBarrier the upper barrier B_U in the option payoff (X_T-K)1_{B_L <= X_t <= B_U}
 	 */
-	public BarrierOptionModifiedbyNico(double maturity, double strike, double lowerBarrier, double upperBarrier) {
+	public BarrierOptionDinamicTimeStepsV2(double maturity, double strike, double lowerBarrier, double upperBarrier) {
 		this.maturity = maturity;
 		this.strike = strike;
 		this.lowerBarrier = lowerBarrier;
@@ -115,7 +98,7 @@ public class BarrierOptionModifiedbyNico extends AbstractAssetMonteCarloProduct 
 			//and this is the simulation
 			MonteCarloBlackScholesModel2 simulation = new MonteCarloBlackScholesModel2(
 					timeDiscretizationForSubInterval,
-					2,
+					1,
 					x,
 					riskFreeRate,
 					volatility,
@@ -127,7 +110,7 @@ public class BarrierOptionModifiedbyNico extends AbstractAssetMonteCarloProduct 
 			
 			for (double timeCheck : timesForChecking) {
 				//we have only one trajectory, so it's a double
-				simulatedValue = simulation.getAssetValue(timeCheck, underlyingIndex).getAverage();
+				simulatedValue = simulation.getAssetValue(timeCheck, underlyingIndex).doubleValue();
 			
 				//if it goes below the barrier, we return it: so when we call this function we have something below the barrier 
 				if (simulatedValue < lowerBarrier) {
@@ -210,12 +193,12 @@ public class BarrierOptionModifiedbyNico extends AbstractAssetMonteCarloProduct 
 		return values;
 
 	}
-    // Metodo setter per la volatilità
+    // Setter for volatility
     public void setVolatility(double volatility) {
         this.volatility = volatility;
     }
 
-    // Metodo setter per il tasso risk-free
+    // Setter for riskFreeRate
     public void setRiskFreeRate(double riskFreeRate) {
         this.riskFreeRate = riskFreeRate;
     }

@@ -56,11 +56,11 @@ public class BarrierOptionTestForTrees {
 			return optionValueTreeCalculator.getValue(ourModelForFunction2);
 		};
 		
+		
 		DoubleUnaryOperator dummyFunctionBlackScholesPrice = (numberOfTimesForFunction) -> {
 			return MyAnalyticForumulas.blackScholesDownAndOut(initialValue,riskFreeRate,volatility, maturity,strike,lowerBarrier, callOrPut);
 		//	return 	BarrierOptions.blackScholesBarrierOptionValue
 		//			(initialValue, riskFreeRate, 0, volatility, maturity, strike, iscall, 0, upperBarrier, BarrierType.UP_OUT);
-			//return AnalyticFormulas.blackScholesOptionValue(spotPrice,riskFreeRate,volatility, lastTime,strike,true);
 		};
 		
 		//compute the optimal numbers of time steps (Boyle and Lau 1994)
@@ -70,7 +70,7 @@ public class BarrierOptionTestForTrees {
 		double fofM = numberOfConsecutiveDownsToReachBarrier*numberOfConsecutiveDownsToReachBarrier*volatility*volatility*maturity
 
 		/Math.pow(Math.log(lowerBarrier/initialValue), 2);
-		System.out.println(fofM);
+		//System.out.println(fofM);
 
 		//int idealNumberOfTimeSteps = (int) fofM;
 

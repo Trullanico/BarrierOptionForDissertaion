@@ -79,8 +79,8 @@ public class BarrierOptionTestFDM {
 		
 		double analyticPrice = MyAnalyticForumulas.blackScholesOptionValue(initialValue,riskFreeRate,volatility, maturity,strike,callOrPut);
 		double analyticPriceDownandOut = MyAnalyticForumulas.blackScholesDownAndOut(initialValue, riskFreeRate, volatility, maturity, strike, lowerBarrier, callOrPut);
-//		double analyticPriceUpandOut = MyAnalyticForumulas.blackScholesUpAndOut(initialValue, riskFreeRate, volatility, maturity, strike, upperBarrier, callOrPut);
-		double analyticPriceUpandIn = MyAnalyticForumulas.blackScholesUpAndIn(initialValue, riskFreeRate, volatility, maturity, strike, upperBarrier, callOrPut);
+		double analyticPriceUpandIn = BarrierOptions.blackScholesBarrierOptionValue
+				(initialValue, riskFreeRate, 0, volatility, maturity, strike, iscall, 0, upperBarrier, BarrierType.UP_IN);
 		double analyticPriceDownandIn = BarrierOptions.blackScholesBarrierOptionValue
 				(initialValue, riskFreeRate, 0, volatility, maturity, strike, iscall, 0, lowerBarrier, BarrierType.DOWN_IN);
 		
@@ -126,8 +126,6 @@ public class BarrierOptionTestFDM {
 			
 			double finiteDifferenceValueOfTheOptionWithoutBarrier = InterpolationWithoutBarrier.getValue(initialValue);	
 			
-			System.out.println("prova" + finiteDifferenceValueOfTheOptionWithoutBarrier);
-			
 			double finiteDifferenceValueKnockIn = finiteDifferenceValueOfTheOptionWithoutBarrier - finiteDifferenceValueOfTheOption;
 			long end1 = System.currentTimeMillis();
 			
@@ -154,11 +152,13 @@ public class BarrierOptionTestFDM {
 				System.out.println("The analytic price of Up and In is : " + analyticPriceUpandIn);
 				}
 	
+			
+			//for test, remember to replace type of option when you change, now is set for a Up and In
 			 double errorPerc = (finiteDifferenceValueKnockIn - analyticPriceUpandIn)/ analyticPriceUpandIn;
 				
-			 System.out.println("Time: " + executionTime);
-			 System.out.println("Time1: " + executionTime1);
-				System.out.println("Error: " + errorPerc);
+			 System.out.println("Time: " + executionTime+ " ms");
+			 System.out.println("Time to use in out parity: " + executionTime1+ " ms");
+			 System.out.println("Error perc: " + errorPerc);
 		
 		}
 		

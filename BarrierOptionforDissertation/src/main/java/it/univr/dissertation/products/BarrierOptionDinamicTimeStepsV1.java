@@ -33,7 +33,7 @@ import net.finmath.time.TimeDiscretizationFromArray;
  *
  * @author Andrea Mazzon
  */
-public class BarrierOptionModified extends AbstractAssetMonteCarloProduct {
+public class BarrierOptionDinamicTimeStepsV1 extends AbstractAssetMonteCarloProduct {
 
 	private double maturity;
 	private double strike;
@@ -45,7 +45,6 @@ public class BarrierOptionModified extends AbstractAssetMonteCarloProduct {
 	
 	private int numberOfSubIntervals;
 	private double volatility ;
-	private double riskFreeRate ;
 
 	/**
 	 * It constructs an object representing a barrier, European call option on an underlying X. The underlying is 
@@ -55,7 +54,7 @@ public class BarrierOptionModified extends AbstractAssetMonteCarloProduct {
 	 * @param upperBarrier the upper barrier B_U in the option payoff (X_T-K)1_{B_L <= X_t <= B_U}
 	 * @param underlyingIndex it identifies the underlying if model in getValue is multi-dimensional
 	 */
-	public BarrierOptionModified(double maturity, double strike, double lowerBarrier, double upperBarrier, int underlyingIndex) {
+	public BarrierOptionDinamicTimeStepsV1(double maturity, double strike, double lowerBarrier, double upperBarrier, int underlyingIndex) {
 		this.maturity = maturity;
 		this.strike = strike;
 		this.lowerBarrier = lowerBarrier;
@@ -72,7 +71,7 @@ public class BarrierOptionModified extends AbstractAssetMonteCarloProduct {
 	 * @param lowerBarrier the lower barrier B_L in the option payoff (X_T-K)1_{B_L <= X_t <= B_U}
 	 * @param upperBarrier the upper barrier B_U in the option payoff (X_T-K)1_{B_L <= X_t <= B_U}
 	 */
-	public BarrierOptionModified(double maturity, double strike, double lowerBarrier, double upperBarrier) {
+	public BarrierOptionDinamicTimeStepsV1(double maturity, double strike, double lowerBarrier, double upperBarrier) {
 		this.maturity = maturity;
 		this.strike = strike;
 		this.lowerBarrier = lowerBarrier;
@@ -228,11 +227,5 @@ public class BarrierOptionModified extends AbstractAssetMonteCarloProduct {
     public void setVolatility(double volatility) {
         this.volatility = volatility;
     }
-
-    // Metodo setter per il tasso risk-free
-    public void setRiskFreeRate(double riskFreeRate) {
-        this.riskFreeRate = riskFreeRate;
-    }
-
-
 }
+
